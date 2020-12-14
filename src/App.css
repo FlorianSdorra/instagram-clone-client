@@ -27,3 +27,13 @@ a {
 .myLink{
   color: blue !important;
 }
+.gallery{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+}
+
+.item{
+  margin-top: 10px;
+  width: 30%;
+}
