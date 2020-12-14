@@ -37,3 +37,9 @@ a {
   margin-top: 10px;
   width: 30%;
 }
+
+.home-card{
+  margin: 26px auto;
+  max-width: 500px;
+  height: max-content;
+}
