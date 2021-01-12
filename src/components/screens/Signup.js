@@ -9,7 +9,7 @@ const Signup = () => {
     const [email, setEmail] = useState("");
 
     const postData = () => {
-        console.log(email)
+        // eslint-disable-next-line no-useless-escape
         if(!/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(email)){
             M.toast({html: "Please use a valid email", classes:"#c62828 red darken"})
             return
@@ -33,8 +33,9 @@ const Signup = () => {
                 M.toast({html: data.message, classes:"#43a047 green darken-1"});
                 history.push('/login')
             }
-        })
-        
+        }).catch(err=>{
+            console.log(err)
+        })   
     }
 
     return (
