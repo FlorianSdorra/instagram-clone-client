@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import secret from '../../keys';
 import {useHistory} from 'react-router-dom';
 import M from 'materialize-css';
@@ -10,28 +10,15 @@ const CreatePost = () =>{
      const [title, setTitle] = useState("");
      const [body, setBody] = useState("");
      const [image, setImage] = useState("");
-     const [url, setUrl] = useState("")
+     const [url, setUrl] = useState("");
 
-     const postDetails = () =>{
-         const data = new FormData()
-         data.append("file", image)
-         data.append("upload_preset", UPLOAD_PRESET )
-         data.append("cloud_name", CLOUD_NAME)
-         fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,{
-             method:"post",
-             body:data
-         })
-         .then(res=>res.json())
-         .then(data=>{
-             setUrl(data.url)
-         })
-         .catch(err=>{
-             console.log(err)
-         })
-         fetch("/createPost",{
+     useEffect(()=>{
+        if(url){
+        fetch(`createpost`,{
             method:"post",
             headers:{
-                "Content-Type":"application/json"
+                "Content-Type":"application/json",
+                "authorization": `Bearer ${localStorage.getItem("jwt")}`
             },
             body:JSON.stringify({
                 title,
@@ -40,18 +27,47 @@ const CreatePost = () =>{
             })
         }).then(res=>res.json())
         .then(data=>{
-            console.log(data);
+            console.log(data)
             if(data.error){
                 M.toast({html: data.error, classes:"#c62828 red darken"})
             }
             else{
-                M.toast({html: "Logged In successfully", classes:"#43a047 green darken-1"});
+                M.toast({html: "success", classes:"#43a047 green darken-1"})
                 history.push('/')
             }
         }).catch(err=>{
             console.log(err)
-        })   
+            
+        })
      }
+    }, [url])
+
+    const postDetails = () => {
+        const data = new FormData();
+        data.append("file", image);
+        data.append("upload_preset", UPLOAD_PRESET);
+        data.append("cloud_name", CLOUD_NAME);
+
+        if(!title || !body || !image){
+            M.toast({html: "please add all fields", classes:"#c62828 red darken"})
+        }
+        else{
+            fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,{
+            method:"post",
+            body:data
+        })
+        .then(res=>res.json())
+        .then(data=>{
+            if(data.error){
+                M.toast({html: "your file is not processible", classes:"#c62828 red darken"})
+            }
+            setUrl(data.url)
+        })
+        .catch(err=>{
+            console.log(err)
+        })
+        } 
+    }
     return(
         <div className="card input-field"
         style={{
