@@ -40,6 +40,7 @@ const CreatePost = () =>{
             
         })
      }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [url])
 
     const postDetails = () => {
