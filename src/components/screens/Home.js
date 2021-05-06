@@ -16,8 +16,9 @@ const Home = () => {
             setData(result.posts)
         })
     }
-
     useEffect(mainCall,[])
+    // console.log(data[0].postedBy._id)
+    // console.log(state)
 
     const likePost = (id) => {
         fetch('/like',{
@@ -101,10 +102,26 @@ const Home = () => {
         })
     }
 
+    const deletePost = (postId)=>{
+        fetch(`/deletepost/${postId}`,{
+            method:"delete",
+            headers:{
+                Authorization:`Bearer ${localStorage.getItem("jwt")}`
+            }
+        }).then(res=>res.json())
+        .then(result=>{
+            console.log(result)
+            const newData = data.filter(item=>{
+                return item._id !== result._id
+            })
+            setData(newData)
+        })
+    }
+
     const list = data.map(item=>{
                     return(
                         <div className="card home-card" key={item._id}>
-                            <h5>{item.postedBy.name}</h5>
+                            <h5>{item.postedBy.name} {item.postedBy._id === state._id && <i className="material-icons" style={{float:"right"}} onClick={()=>deletePost(item._id)}>delete</i>}</h5>
                             <div className="card-image">
                                 <img src={item.photo} alt="cardimage"/>
                             </div>

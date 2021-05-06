@@ -43,3 +43,7 @@ a {
   max-width: 500px;
   height: max-content;
 }
+
+.home-card > h5 {
+  padding: 10px 15px;
+}
