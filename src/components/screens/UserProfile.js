@@ -1,7 +1,6 @@
 import React, {useEffect, useState, useContext} from 'react';
 import {UserContext} from '../../App';
 import {useParams} from 'react-router-dom';
-import M from 'materialize-css';
 
 const UserProfile = () => {
     const [userProfile, setProfile] = useState(null);
@@ -16,10 +15,65 @@ const UserProfile = () => {
             }
         }).then(res=>res.json())
         .then(result=>{
-            console.log(result)
             setProfile(result)
         })
+        console.log(state)
     },[])
+
+     const followUser = () => {
+         fetch('/follow', {
+             method:"put",
+             headers:{
+                 "Content-Type":"application/json",
+                 "Authorization":"Bearer "+localStorage.getItem('jwt')
+             },
+             body:JSON.stringify({
+                 followId:userid
+             })
+         }).then(res=>res.json())
+         .then(result=>{
+            dispatch({type:"UPDATE",payload:{following:result.following,followers:result.followers}})
+            localStorage.setItem("user", JSON.stringify(result))
+            setProfile((prevState)=>{
+                return {
+                    ...prevState,
+                    user:{
+                        ...prevState.user,
+                        followers:[...prevState.user.followers,result._id]
+                    }
+                }
+            })
+         })
+     }
+
+     const unfollowUser = () => {
+        fetch('/unfollow', {
+            method:"put",
+            headers:{
+                "Content-Type":"application/json",
+                "Authorization":"Bearer "+localStorage.getItem('jwt')
+            },
+            body:JSON.stringify({
+                unfollowId:userid
+            })
+        }).then(res=>res.json())
+        .then(result=>{
+           dispatch({type:"UPDATE",payload:{following:result.following,followers:result.followers}})
+           localStorage.setItem("user", JSON.stringify(result))
+           setProfile((prevState)=>{
+               const updatedFollowers = prevState.user.followers.filter((item)=>  item !== result._id)
+               console.log(result._id)
+               return {
+                   ...prevState,
+                   user:{
+                       ...prevState.user,
+                       followers:updatedFollowers
+                   }
+               }
+           })
+        })
+    }
+
     return (
         <>
         {userProfile ? 
@@ -37,12 +91,13 @@ const UserProfile = () => {
                 />
             </div>
             <div>
-                <h4>{userProfile.user.name}</h4>
+            
+                <h4>{userProfile.user.name}{userProfile.user.followers.includes(state._id)?<span className={"follow-button"}><button onClick={()=>unfollowUser()} class="btn-floating btn-small waves-effect waves-light red" title="unfollow"><i class="material-icons">remove</i></button></span> :<span className={"follow-button"}><button onClick={()=>followUser()} class="btn-floating btn-small waves-effect waves-light green" title="follow"><i class="material-icons">add</i></button></span>}</h4>
                 <h5>{userProfile.user.email}</h5>
                 <div style={{display:"flex", justifyContent:"space-between", width:"109%"}}>
                     <h6>{userProfile.posts.length} posts</h6>
-                    <h6>40 followers</h6>
-                    <h6>40 following</h6>
+                    <h6>{userProfile.user.followers.length} followers</h6>
+                    <h6>{userProfile.user.following.length} following</h6>
                 </div>
             </div>    
         </div>
