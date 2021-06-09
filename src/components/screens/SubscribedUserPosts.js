@@ -2,13 +2,13 @@ import React, {useState, useEffect, useContext} from 'react';
 import {UserContext} from '../../App';
 import {Link} from 'react-router-dom';
 
-const Home = () => {
+const SubscribedUserPosts = () => {
     const [data, setData] = useState([]);
     const {state, dispatch} = useContext(UserContext)
     console.log(data)
 
     const mainCall = ()=>{
-        fetch('/allposts',{
+        fetch('/subscribedposts',{
             headers:{
                 "Authorization":"Bearer "+localStorage.getItem("jwt")
             }
@@ -146,20 +146,7 @@ const Home = () => {
     const list = data.map(item=>{
                     return(
                         <div className="card home-card" key={item._id}>
-                            <div>
-                                <div className="profilflex">
-                                <img style={{width:"40px", height:"40px", borderRadius:"50%"}}
-                                    src={state?state.pic:"loading"}
-                                    alt="user"
-                                    />
-                                <h5>   
-                                    <Link to={item.postedBy._id !== state._id ? `profile/${item.postedBy._id}` : '/profile'}>{item.postedBy.name}</Link>
-                                </h5>
-                                <div className="deleter">
-                                    {item.postedBy._id === state._id && <i className="material-icons"  onClick={()=>deletePost(item._id)}>delete</i>}
-                                </div>
-                                </div>
-                            </div>    
+                            <h5><Link to={item.postedBy._id !== state._id ? `profile/${item.postedBy._id}` : '/profile'}>{item.postedBy.name}</Link> {item.postedBy._id === state._id && <i className="material-icons" style={{float:"right"}} onClick={()=>deletePost(item._id)}>delete</i>}</h5>
                             <div className="card-image">
                                 <img src={item.photo} alt="cardimage"/>
                             </div>
@@ -196,4 +183,4 @@ const Home = () => {
     )
 }
 
-export default Home;
+export default SubscribedUserPosts;

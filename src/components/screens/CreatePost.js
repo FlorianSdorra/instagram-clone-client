@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
-import secret from '../../keys';
 import {useHistory} from 'react-router-dom';
 import M from 'materialize-css';
+import secret from '../../keys';
 const {CLOUD_NAME, UPLOAD_PRESET} = secret;
 
 
